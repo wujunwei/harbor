@@ -122,7 +122,7 @@ func getPublicKey(crtPath string) (*rsa.PublicKey, error) {
 }
 
 type harborClaims struct {
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 	// Private claims
 	Access []*token.ResourceActions `json:"access"`
 }
