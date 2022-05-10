@@ -518,6 +518,36 @@ Test Case - Copy A Image
     Retry Wait Until Page Contains Element  xpath=${tag_value_xpath}
     Close Browser
 
+Test Case - Copy A Image And Accessory
+    [Tags]  copy_image_and_accessory
+    Init Chrome Driver
+    ${d}=  Get Current Date  result_format=%m%s
+    ${source_project}=  Set Variable  source_project${d}
+    ${target_project}=  Set Variable  target_project${d}
+    ${user}=  Set Variable  user006
+    ${pwd}=  Set Variable  Test1@34
+    ${image}=  Set Variable  redis
+    ${tag}=  Set Variable  latest
+
+    Sign In Harbor  ${HARBOR_URL}  ${user}  ${pwd}
+    Create An New Project And Go Into Project  ${target_project}
+    Create An New Project And Go Into Project  ${source_project}
+
+    Push Image With Tag  ${ip}  ${user}  ${pwd}  ${source_project}  ${image}  ${tag}
+    Cosign Generate Key Pair
+    Docker Login  ${ip}  ${user}  ${pwd}
+    Cosign Sign  ${ip}/${source_project}/${image}:${tag}
+    Docker Logout  ${ip}
+    Retry Double Keywords When Error  Go Into Repo  ${source_project}/${image}  Should Be Signed By Cosign  ${tag}
+    
+    Copy Image  ${tag}  ${target_project}  ${image}
+    Retry Wait Until Page Contains  Copy artifact successfully
+
+    Retry Double Keywords When Error  Go Into Project  ${target_project}  Retry Wait Until Page Contains  ${image}
+    Retry Double Keywords When Error  Go Into Repo  ${target_project}/${image}  Retry Wait Until Page Contains Element  //clr-dg-row[contains(.,${tag})]
+    Should Be Signed By Cosign  ${tag}
+    Close Browser
+
 Test Case - Create An New Project With Quotas Set
     Init Chrome Driver
     ${d}=  Get Current Date  result_format=%m%s
@@ -597,7 +627,7 @@ Test Case - Webhook CRUD
     Create A New Webhook   webhook${d}   https://test.com
     Create A New Webhook   webhook2${d}   https://test2.com
     Update A Webhook    webhook${d}  newWebhook${d}   https://new-test.com
-    Enable/Disable State of Same Webhook   newWebhook${d}
+    Enable/Deactivate State of Same Webhook   newWebhook${d}
     Delete A Webhook  newWebhook${d}
     Close Browser
 
@@ -717,7 +747,7 @@ Test Case - Push Helm Chart and Display
     Sign In Harbor  ${HARBOR_URL}  user010  Test1@34
     Create An New Project And Go Into Project  test${d}
 
-    Helm Chart Push  ${ip}  user010  Test1@34  ${chart_file}  ${archive}  test${d}  ${repo_name}  ${verion}
+    Retry Action Keyword  Helm Chart Push  ${ip}  user010  Test1@34  ${chart_file}  ${archive}  test${d}  ${repo_name}  ${verion}
 
     Go Into Project  test${d}
     Wait Until Page Contains  test${d}/${repo_name}
@@ -863,3 +893,30 @@ Test Case - Carvel Imgpkg Push And Pull To Harbor
     Wait Unitl Command Success  docker logout ${ip}
     Retry File Should Exist  ${out_path}/.imgpkg/bundle.yml
     Retry File Should Exist  ${out_path}/.imgpkg/images.yml
+
+Test Case - Cosign And Cosign Deployment Security Policy
+    [Tags]  cosign
+    Init Chrome Driver
+    ${user}=  Set Variable  user006
+    ${pwd}=  Set Variable  Test1@34
+    ${d}=  Get Current Date  result_format=%m%s
+    ${image}=  Set Variable  hello-world
+    ${tag}=  Set Variable  latest
+    Sign In Harbor  ${HARBOR_URL}  ${user}  ${pwd}
+    Create An New Project And Go Into Project  project${d}
+    Goto Project Config
+    Click Cosign Deployment Security
+    Save Project Config
+    Content Cosign Deployment security Be Selected
+
+    Push Image With Tag  ${ip}  ${user}  ${pwd}  project${d}  ${image}  ${tag}
+    Go Into Project  project${d}
+    Retry Double Keywords When Error  Go Into Repo  project${d}/${image}  Should Not Be Signed By Cosign  ${tag}
+    Cannot Pull Image  ${ip}  ${user}  ${pwd}  project${d}  ${image}:${tag}  err_msg=The image is not signed in Cosign.
+    
+    Cosign Generate Key Pair
+    Cosign Sign  ${ip}/project${d}/${image}:${tag}
+    Retry Double Keywords When Error  Retry Element Click  ${artifact_list_refresh_btn}  Should Be Signed By Cosign  ${tag}
+    Pull image  ${ip}  ${user}  ${pwd}  project${d}  ${image}:${tag}
+
+    Retry Double Keywords When Error  Delete Accessory  ${tag}  Should be Accessory deleted  ${tag}

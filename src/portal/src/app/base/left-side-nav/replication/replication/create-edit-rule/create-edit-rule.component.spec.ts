@@ -1,5 +1,4 @@
-import {ComponentFixture, fakeAsync, TestBed, tick, waitForAsync} from "@angular/core/testing";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { ComponentFixture, fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { ConfirmationDialogComponent } from "../../../../../shared/components/confirmation-dialog";
 import { CronTooltipComponent } from "../../../../../shared/components/cron-schedule";
 import { CreateEditRuleComponent } from "./create-edit-rule.component";
@@ -7,7 +6,6 @@ import { DatePickerComponent } from "../../../../../shared/components/datetime-p
 import { FilterComponent } from "../../../../../shared/components/filter/filter.component";
 import { InlineAlertComponent } from "../../../../../shared/components/inline-alert/inline-alert.component";
 import {
-  ReplicationRule,
   ReplicationJob,
   ReplicationJobItem
 } from "../../../../../shared/services";
@@ -16,22 +14,22 @@ import {
   ReplicationService,
 } from "../../../../../shared/services";
 import {LabelPieceComponent} from "../../../../../shared/components/label/label-piece/label-piece.component";
-import { RouterTestingModule } from '@angular/router/testing';
 import { of } from "rxjs";
 import {HttpHeaders, HttpResponse} from "@angular/common/http";
 import {delay} from "rxjs/operators";
 import { SharedTestingModule } from "../../../../../shared/shared.module";
 import { RegistryService } from "../../../../../../../ng-swagger-gen/services/registry.service";
 import { Registry } from "../../../../../../../ng-swagger-gen/models/registry";
+import { ReplicationPolicy } from '../../../../../../../ng-swagger-gen/models/replication-policy';
 
 describe("CreateEditRuleComponent (inline template)", () => {
-  let mockRules: ReplicationRule[] = [
+  let mockRules: ReplicationPolicy[] = [
     {
       id: 1,
       name: "sync_01",
       description: "",
       src_registry: {id: 2},
-      src_namespaces: ["name1", "name2"],
+      dest_namespace: "",
       trigger: {
         type: "Manual",
         trigger_settings: {}
@@ -139,11 +137,11 @@ describe("CreateEditRuleComponent (inline template)", () => {
     }
   ];
 
-  let mockRule: ReplicationRule = {
+  let mockRule: ReplicationPolicy = {
     id: 1,
     name: "sync_01",
     description: "",
-    src_namespaces: ["namespace1", "namespace2"],
+    dest_namespace: "",
     src_registry: {id: 10 },
     dest_registry: {id: 0 },
     trigger: {
@@ -228,9 +226,9 @@ describe("CreateEditRuleComponent (inline template)", () => {
       return of(mockEndpoints).pipe(delay(0));
     }
   };
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      imports: [SharedTestingModule, NoopAnimationsModule, RouterTestingModule],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ SharedTestingModule ],
       declarations: [
         CreateEditRuleComponent,
         CronTooltipComponent,
@@ -245,8 +243,8 @@ describe("CreateEditRuleComponent (inline template)", () => {
         { provide: ReplicationService, useValue: fakedReplicationService },
         { provide: RegistryService, useValue: fakedEndpointService },
       ]
-    });
-  }));
+    }).compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CreateEditRuleComponent);

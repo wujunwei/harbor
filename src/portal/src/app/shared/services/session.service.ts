@@ -25,8 +25,8 @@ import {
 } from "../units/utils";
 import { FlushAll } from "../units/cache-util";
 import { SignInCredential } from "../../account/sign-in/sign-in-credential";
-import { DeFaultLang } from "../entities/shared.const";
 import { ProjectMemberEntity } from "../../../../ng-swagger-gen/models/project-member-entity";
+import { DeFaultLang } from "../entities/shared.const";
 
 
 const signInUrl = '/c/login';
@@ -35,7 +35,7 @@ const signOffEndpoint = "/c/log_out";
 const accountEndpoint = CURRENT_BASE_HREF + "/users/:id";
 const langEndpoint = "/language";
 const userExistsEndpoint = "/c/userExists";
-const renameAdminEndpoint = CURRENT_BASE_HREF + '/internal/renameadmin';
+const renameAdminEndpoint =  'api/internal/renameadmin';
 const langMap = {
     "zh": "zh-CN",
     "en": "en-US"

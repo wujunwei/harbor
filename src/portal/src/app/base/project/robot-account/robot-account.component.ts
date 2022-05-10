@@ -7,7 +7,13 @@ import {
   ACTION_RESOURCE_I18N_MAP,
   PermissionsKinds
 } from "../../left-side-nav/system-robot-accounts/system-robot-util";
-import { clone, DEFAULT_PAGE_SIZE, getSortingString } from "../../../shared/units/utils";
+import {
+  clone,
+  getPageSizeFromLocalStorage,
+  getSortingString,
+  PageSizeMapKeys,
+  setPageSizeToLocalStorage
+} from "../../../shared/units/utils";
 import { ViewTokenComponent } from "../../../shared/components/view-token/view-token.component";
 import { FilterComponent } from "../../../shared/components/filter/filter.component";
 import { MessageHandlerService } from "../../../shared/services/message-handler.service";
@@ -25,6 +31,7 @@ import { ConfirmationDialogService } from "../../global-confirmation-dialog/conf
 import { ConfirmationButtons, ConfirmationState, ConfirmationTargets } from "../../../shared/entities/shared.const";
 import { errorHandler } from "../../../shared/units/shared.utils";
 import { ConfirmationMessage } from "../../global-confirmation-dialog/confirmation-message";
+import { SysteminfoService } from '../../../../../ng-swagger-gen/services/systeminfo.service';
 
 @Component({
   selector: "app-robot-account",
@@ -33,7 +40,7 @@ import { ConfirmationMessage } from "../../global-confirmation-dialog/confirmati
 })
 export class RobotAccountComponent implements OnInit, OnDestroy {
   i18nMap = ACTION_RESOURCE_I18N_MAP;
-  pageSize: number = DEFAULT_PAGE_SIZE;
+  pageSize: number = getPageSizeFromLocalStorage(PageSizeMapKeys.PROJECT_ROBOT_COMPONENT);
   currentPage: number = 1;
   total: number = 0;
   robots: Robot[] = [];
@@ -55,6 +62,7 @@ export class RobotAccountComponent implements OnInit, OnDestroy {
   hasRobotReadPermission: boolean;
   projectId: number;
   projectName: string;
+  deltaTime: number; // the different between server time and local time
   constructor(private robotService: RobotService,
               private msgHandler: MessageHandlerService,
               private operateDialogService: ConfirmationDialogService,
@@ -63,8 +71,10 @@ export class RobotAccountComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute,
               private translate: TranslateService,
               private sanitizer: DomSanitizer,
+              private systemInfoService: SysteminfoService
   ) {}
   ngOnInit() {
+    this.getCurrenTime();
     this.projectId = +this.route.snapshot.parent.parent.params["id"];
     let resolverData = this.route.snapshot.parent.parent.data;
     if (resolverData) {
@@ -121,6 +131,15 @@ export class RobotAccountComponent implements OnInit, OnDestroy {
       );
     }
   }
+  getCurrenTime() {
+    this.systemInfoService.getSystemInfo().subscribe(
+        res => {
+          if (res?.current_time) {
+            this.deltaTime = new Date().getTime() - new Date(res?.current_time).getTime();
+          }
+        }
+    );
+  }
   getPermissionsList(): void {
     let permissionsList = [];
     permissionsList.push(this.userPermissionService.getPermission(this.projectId,
@@ -152,6 +171,7 @@ export class RobotAccountComponent implements OnInit, OnDestroy {
   clrLoad(state?: ClrDatagridStateInterface) {
     if (state && state.page && state.page.size) {
       this.pageSize = state.page.size;
+      setPageSizeToLocalStorage(PageSizeMapKeys.PROJECT_ROBOT_COMPONENT, this.pageSize);
     }
     this.selectedRows = [];
     const queryParam: RobotService.ListRobotParams = {

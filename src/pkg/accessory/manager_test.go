@@ -37,6 +37,13 @@ func (m *managerTestSuite) SetupTest() {
 	}
 }
 
+func (m *managerTestSuite) TestEnsure() {
+	mock.OnAnything(m.dao, "List").Return([]*dao.Accessory{}, nil)
+	mock.OnAnything(m.dao, "Create").Return(int64(1), nil)
+	err := m.mgr.Ensure(nil, int64(1), int64(1), int64(1), "sha256:1234", model.TypeCosignSignature)
+	m.Require().Nil(err)
+}
+
 func (m *managerTestSuite) TestList() {
 	acc := &dao.Accessory{
 		ID:   1,
@@ -95,6 +102,16 @@ func (m *managerTestSuite) TestDeleteOfArtifact() {
 	err := m.mgr.DeleteAccessories(nil, q.New(q.KeyWords{"ArtifactID": 1}))
 	m.Require().Nil(err)
 	m.dao.AssertExpectations(m.T())
+}
+
+func (m *managerTestSuite) TestGetIcon() {
+	var icon string
+	icon = m.mgr.GetIcon("")
+	m.Require().Empty(icon, "empty icon")
+	icon = m.mgr.GetIcon("signature.cosign")
+	m.Require().Equal("sha256:20401d5b3a0f6dbc607c8d732eb08471af4ae6b19811a4efce8c6a724aed2882", icon)
+	icon = m.mgr.GetIcon("unknown")
+	m.Require().Empty(icon, "empty icon")
 }
 
 func TestManager(t *testing.T) {

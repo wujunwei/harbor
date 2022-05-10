@@ -656,7 +656,8 @@
         "BANDWIDTH": "Bandwidth",
         "BANDWIDTH_ERROR_TIP": "Please enter -1 or an integer greater than 0",
         "BANDWIDTH_TOOLTIP": "Set the maximum network bandwidth for each execution. Please pay attention to the number of concurrent executions. For unlimited bandwidth, please enter -1",
-        "UNLIMITED": "Unlimited"
+        "UNLIMITED": "Unlimited",
+        "UNREACHABLE_SOURCE_REGISTRY": "Failed to connect to the source registry, please make sure the source registry is available before editing this rule: {{error}}"
     },
     "DESTINATION": {
         "NEW_ENDPOINT": "Nuevo Endpoint",
@@ -924,16 +925,16 @@
             "SCOPE": "LDAP Ámbito",
             "VERIFY_CERT": "LDAP Verify Cert",
             "LDAP_GROUP_BASE_DN": "LDAP Group Base DN",
-            "LDAP_GROUP_BASE_DN_INFO": "The base DN from which to look up a group in LDAP/AD.",
+            "LDAP_GROUP_BASE_DN_INFO": "The base DN from which to look up a group in LDAP/AD. This field cannot be empty if you need to enable the LDAP group related feature.",
             "LDAP_GROUP_FILTER": "LDAP Group Filter",
-            "LDAP_GROUP_FILTER_INFO": "The filter to look up an LDAP/AD group, use objectclass=groupOfNames by default.",
+            "LDAP_GROUP_FILTER_INFO": "The filter to search for LDAP/AD groups. For OpenLDAP: objectclass=groupOfNames. For Active Directory: objectclass=group. This field cannot be empty if you need the LDAP group-related feature.",
             "LDAP_GROUP_GID": "LDAP Group GID",
-            "LDAP_GROUP_GID_INFO": "The attribute used in a search to match a user, it could be uid, cn or other attributes depending on your LDAP/AD. the group in Harbor is named with this attribute by default.",
+            "LDAP_GROUP_GID_INFO": "The attribute used in a search to match a user, it could be uid, cn or other attributes depending on your LDAP/AD. the group in Harbor is named with this attribute by default. This field cannot be empty if you need to enable the LDAP group related feature.",
             "LDAP_GROUP_ADMIN_DN": "LDAP Group Admin DN",
             "LDAP_GROUP_ADMIN_DN_INFO": "Specify an LDAP group DN. all LDAP user in this group will have harbor admin privilege. Keep it blank if you do not want to.",
             "LDAP_GROUP_MEMBERSHIP": "LDAP Group Membership",
-            "LDAP_GROUP_MEMBERSHIP_INFO": "The attribute indicates the membership of LDAP group, default value is memberof, in some LDAP server it could be \"ismemberof\"",
-            "GROUP_SCOPE": "LDAP Group Scope",
+            "LDAP_GROUP_MEMBERSHIP_INFO": "The attribute indicates the membership of LDAP group, default value is memberof, in some LDAP server it could be \"ismemberof\". This field cannot be empty if you need to enable the LDAP group related feature.",
+            "GROUP_SCOPE": "LDAP Group Search Scope",
             "GROUP_SCOPE_INFO": "The scope to search for groups, select Subtree by default."
         },
         "UAA": {
@@ -1089,7 +1090,7 @@
         "DOCKER": "Docker",
         "HELM": "Helm",
         "CNAB": "CNAB",
-        "TAG_COMMAND_CHART": "Tag a chart for this project:",
+        "TAG_COMMAND_CHART": "Package a chart for this project:",
         "PUSH_COMMAND_CHART": "Push a chart to this project:",
         "PUSH_COMMAND_CNAB": "Push a CNAB to this project:",
         "TOOLTIP": "Command references for pushing an artifact to this project.",
@@ -1703,7 +1704,9 @@
         "STOP": "Stop",
         "LIST": "List",
         "REPOSITORY": "Repository",
-        "HELM_LABEL": "Helm Chart label"
+        "HELM_LABEL": "Helm Chart label",
+        "EXPIRES_IN": "Expires in",
+        "EXPIRED": "Expired"
     },
     "ACCESSORY": {
         "DELETION_TITLE_ACCESSORY": "Confirm Accessory Deletion",

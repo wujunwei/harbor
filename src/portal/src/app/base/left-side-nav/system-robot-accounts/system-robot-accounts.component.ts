@@ -3,7 +3,13 @@ import { NewRobotComponent } from './new-robot/new-robot.component';
 import { ViewTokenComponent } from '../../../shared/components/view-token/view-token.component';
 import { RobotService } from "../../../../../ng-swagger-gen/services/robot.service";
 import { Robot } from "../../../../../ng-swagger-gen/models/robot";
-import { clone, DEFAULT_PAGE_SIZE, getSortingString } from "../../../shared/units/utils";
+import {
+  clone,
+  getPageSizeFromLocalStorage,
+  getSortingString,
+  PageSizeMapKeys,
+  setPageSizeToLocalStorage
+} from "../../../shared/units/utils";
 import { ClrDatagridStateInterface, ClrLoadingState } from "@clr/angular";
 import { catchError, debounceTime, distinctUntilChanged, finalize, map, switchMap } from "rxjs/operators";
 import { MessageHandlerService } from "../../../shared/services/message-handler.service";
@@ -28,8 +34,10 @@ import { ConfirmationButtons, ConfirmationState, ConfirmationTargets } from "../
 import { errorHandler } from "../../../shared/units/shared.utils";
 import { ConfirmationMessage } from "../../global-confirmation-dialog/confirmation-message";
 import { RobotPermission } from "../../../../../ng-swagger-gen/models/robot-permission";
+import { SysteminfoService } from '../../../../../ng-swagger-gen/services/systeminfo.service';
 
 const FIRST_PROJECTS_PAGE_SIZE: number = 100;
+
 @Component({
   selector: 'system-robot-accounts',
   templateUrl: './system-robot-accounts.component.html',
@@ -37,7 +45,7 @@ const FIRST_PROJECTS_PAGE_SIZE: number = 100;
 })
 export class SystemRobotAccountsComponent implements OnInit, OnDestroy {
   i18nMap = ACTION_RESOURCE_I18N_MAP;
-  pageSize: number = DEFAULT_PAGE_SIZE;
+  pageSize: number = getPageSizeFromLocalStorage(PageSizeMapKeys.SYSTEM_ROBOT_COMPONENT);
   currentPage: number = 1;
   total: number = 0;
   robots: FrontRobot[] = [];
@@ -56,6 +64,7 @@ export class SystemRobotAccountsComponent implements OnInit, OnDestroy {
   searchSub: Subscription;
   searchKey: string;
   subscription: Subscription;
+  deltaTime: number; // the different between server time and local time
   constructor(private robotService: RobotService,
               private projectService: ProjectService,
               private msgHandler: MessageHandlerService,
@@ -63,8 +72,10 @@ export class SystemRobotAccountsComponent implements OnInit, OnDestroy {
               private operationService: OperationService,
               private sanitizer: DomSanitizer,
               private translate: TranslateService,
+              private systemInfoService: SysteminfoService
   ) {}
   ngOnInit() {
+    this.getCurrenTime();
     this.loadDataFromBackend();
     if (!this.searchSub) {
       this.searchSub = this.filterComponent.filterTerms.pipe(
@@ -123,6 +134,15 @@ export class SystemRobotAccountsComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
       this.subscription = null;
     }
+  }
+  getCurrenTime() {
+    this.systemInfoService.getSystemInfo().subscribe(
+        res => {
+          if (res?.current_time) {
+            this.deltaTime = new Date().getTime() - new Date(res?.current_time).getTime();
+          }
+        }
+    );
   }
   loadDataFromBackend() {
     this.loadingData = true;
@@ -183,6 +203,7 @@ export class SystemRobotAccountsComponent implements OnInit, OnDestroy {
   clrLoad(state?: ClrDatagridStateInterface) {
     if (state && state.page && state.page.size) {
       this.pageSize = state.page.size;
+      setPageSizeToLocalStorage(PageSizeMapKeys.SYSTEM_ROBOT_COMPONENT, this.pageSize);
     }
     this.selectedRows = [];
     const queryParam: RobotService.ListRobotParams = {

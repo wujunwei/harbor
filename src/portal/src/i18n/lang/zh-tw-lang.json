@@ -651,7 +651,8 @@
     "BANDWIDTH": "Bandwidth",
     "BANDWIDTH_ERROR_TIP": "Please enter -1 or an integer greater than 0",
     "BANDWIDTH_TOOLTIP": "Set the maximum network bandwidth for each execution. Please pay attention to the number of concurrent executions. For unlimited bandwidth, please enter -1",
-    "UNLIMITED": "Unlimited"
+    "UNLIMITED": "Unlimited",
+    "UNREACHABLE_SOURCE_REGISTRY": "Failed to connect to the source registry, please make sure the source registry is available before editing this rule: {{error}}"
   },
   "DESTINATION":{
     "NEW_ENDPOINT": "新建目標",
@@ -919,17 +920,17 @@
       "SCOPE": "LDAP搜索範圍",
       "VERIFY_CERT": "LDAP檢查證書",
       "LDAP_GROUP_BASE_DN": "LDAP組基礎DN",
-      "LDAP_GROUP_BASE_DN_INFO": "LDAP/AD中,用於查找組的基礎DN",
+      "LDAP_GROUP_BASE_DN_INFO": "LDAP/AD中,用於查找組的基礎DN. This field cannot be empty if you need the LDAP group-related feature.",
       "LDAP_GROUP_FILTER": "LDAP組過濾器",
-      "LDAP_GROUP_FILTER_INFO": "LDAP組的過濾器,默認設置為objectclass=groupOfnames",
+      "LDAP_GROUP_FILTER_INFO": "The filter to search for LDAP/AD groups. For OpenLDAP: objectclass=groupOfNames. For Active Directory: objectclass=group. This field cannot be empty if you need the LDAP group-related feature.",
       "LDAP_GROUP_GID": "LDAP組ID屬性",
-      "LDAP_GROUP_GID_INFO": "LDAP組的GID,用於匹配用戶的一個屬性,可以是uid,cn或者其他屬性",
+      "LDAP_GROUP_GID_INFO": "LDAP組的GID,用於匹配用戶的一個屬性,可以是uid,cn或者其他屬性. This field cannot be empty if you need the LDAP group-related feature.",
       "LDAP_GROUP_ADMIN_DN": "LDAP組管理員DN",
       "LDAP_GROUP_ADMIN_DN_INFO": "LDAP組管理員DN,所有組內用戶都會有管理員權限,此屬性可以為空",
       "LDAP_GROUP_MEMBERSHIP": "LDAP 組成員",
-      "LDAP_GROUP_MEMBERSHIP_INFO": "LDAP組成員的membership屬性,默認為memberof, 在某些LDAP服務器會變為ismemberof",
+      "LDAP_GROUP_MEMBERSHIP_INFO": "LDAP組成員的membership屬性,默認為memberof, 在某些LDAP服務器會變為ismemberof. This field cannot be empty if you need the LDAP group-related feature.",
       "GROUP_SCOPE": "LDAP組搜索範圍",
-      "GROUP_SCOPE_INFO": "搜索範圍"
+      "GROUP_SCOPE_INFO": "The scope to search for groups, select Subtree by default."
     },
     "UAA":{
       "ENDPOINT":"UAA Endpoint",
@@ -1081,6 +1082,12 @@
   },
   "PUSH_IMAGE":{
     "TITLE": "推送鏡像的Docker命令",
+    "DOCKER": "Docker",
+    "HELM": "Helm",
+    "CNAB": "CNAB",
+    "TAG_COMMAND_CHART": "Package a chart for this project:",
+    "PUSH_COMMAND_CHART": "Push a chart to this project:",
+    "PUSH_COMMAND_CNAB": "Push a CNAB to this project:",
     "TOOLTIP": "推送一個鏡像到當前項目的參考命令。",
     "TAG_COMMAND": "在項目中標記鏡像：",
     "PUSH_COMMAND": "推送鏡像到當前項目：",
@@ -1689,7 +1696,9 @@
     "STOP": "Stop",
     "LIST": "List",
     "REPOSITORY": "Repository",
-    "HELM_LABEL": "Helm Chart label"
+    "HELM_LABEL": "Helm Chart label",
+    "EXPIRES_IN": "Expires in",
+    "EXPIRED": "Expired"
   },
   "ACCESSORY": {
     "DELETION_TITLE_ACCESSORY": "Confirm Accessory Deletion",

@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 import { ArtifactListTabComponent } from "./artifact-list-tab.component";
 import { of } from "rxjs";
@@ -31,6 +31,7 @@ import { Registry } from "../../../../../../../../../ng-swagger-gen/models/regis
 import { AppConfigService } from "../../../../../../../services/app-config.service";
 import { ArtifactListPageService } from '../../artifact-list-page.service';
 import { ClrLoadingState } from '@clr/angular';
+import { Accessory } from "ng-swagger-gen/models/accessory";
 
 describe("ArtifactListTabComponent (inline template)", () => {
 
@@ -263,6 +264,16 @@ describe("ArtifactListTabComponent (inline template)", () => {
 
       }
     },
+    listAccessoriesResponse() {
+      const res: HttpResponse<Array<Accessory>> = new HttpResponse<Array<Accessory>>({
+        headers: new HttpHeaders({'x-total-count': '0'}),
+        body: []
+      });
+      return of(res).pipe(delay(0));
+    },
+    listAccessories() {
+      return of(null).pipe(delay(0));
+    },
     listArtifactsResponse: () => {
       if (filtereName === 'sha256:3e33e3e3') {
         return of(
@@ -325,8 +336,8 @@ describe("ArtifactListTabComponent (inline template)", () => {
     init() {
     }
   };
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [
         SharedTestingModule,
       ],
@@ -355,7 +366,7 @@ describe("ArtifactListTabComponent (inline template)", () => {
         { provide: NewArtifactService, useValue: mockNewArtifactService },
       ]
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ArtifactListTabComponent);
