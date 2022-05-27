@@ -1,6 +1,7 @@
 package v2
 
 import (
+	"crypto/subtle"
 	"fmt"
 
 	"github.com/docker/distribution/registry/auth/token"
@@ -23,7 +24,7 @@ func (c *Claims) Valid() error {
 	if err := c.StandardClaims.Valid(); err != nil {
 		return err
 	}
-	if !c.VerifyIssuer(Issuer, true) {
+	if subtle.ConstantTimeCompare([]byte(c.Issuer), []byte(Issuer)) == 0 {
 		return fmt.Errorf("invalid token issuer: %s", c.Issuer)
 	}
 	return nil
