@@ -8,6 +8,10 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+func init() {
+	jwt.MarshalSingleStringAsArray = false
+}
+
 const (
 	// Issuer is the only valid issuer for jwt token sent to /v2/xxxx
 	Issuer = "harbor-token-issuer"
