@@ -12,6 +12,7 @@ import (
 	projectCtl "github.com/goharbor/harbor/src/controller/project"
 	retentionCtl "github.com/goharbor/harbor/src/controller/retention"
 	"github.com/goharbor/harbor/src/lib/errors"
+	"github.com/goharbor/harbor/src/pkg"
 	"github.com/goharbor/harbor/src/pkg/project/metadata"
 	"github.com/goharbor/harbor/src/pkg/retention/policy"
 	"github.com/goharbor/harbor/src/pkg/task"
@@ -24,7 +25,7 @@ func newRetentionAPI() *retentionAPI {
 	return &retentionAPI{
 		projectCtl:   projectCtl.Ctl,
 		retentionCtl: retentionCtl.Ctl,
-		proMetaMgr:   metadata.Mgr,
+		proMetaMgr:   pkg.ProjectMetaMgr,
 	}
 }
 
@@ -175,7 +176,7 @@ func (r *retentionAPI) CreateRetention(ctx context.Context, params operation.Cre
 	if err != nil {
 		return r.SendError(ctx, err)
 	}
-	if old != nil && len(old) > 0 {
+	if len(old) > 0 {
 		return r.SendError(ctx, errors.BadRequestError(fmt.Errorf("project %v already has retention policy %v", p.Scope.Reference, old["retention_id"])))
 	}
 

@@ -5610,7 +5610,7 @@ parameters:
     name: X-Accept-Vulnerabilities
     in: header
     type: string
-    default: 'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0'
+    default: 'application/vnd.security.vulnerability.report; version=1.1, application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0'
     description: |-
       A comma-separated lists of MIME types for the scan report or scan summary. The first mime type will be used when the report found for it.
       Currently the mime type supports 'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0' and 'application/vnd.security.vulnerability.report; version=1.1'
@@ -7472,7 +7472,10 @@ definitions:
       cron:
         type: string
         description: A cron expression, a time-based job scheduler.
-
+      next_scheduled_time:
+        type: string
+        format: date-time
+        description: The next time to schedule to run the job.
   Stats:
     type: object
     description: Stats provides the overall progress of the scan all process.
@@ -8375,6 +8378,12 @@ definitions:
       storage_per_project:
         $ref: '#/definitions/IntegerConfigItem'
         description: The storage quota per project
+      audit_log_forward_endpoint:
+        $ref: '#/definitions/StringConfigItem'
+        description: The endpoint of the audit log forwarder
+      skip_audit_log_database:
+        $ref: '#/definitions/BoolConfigItem'
+        description: Whether skip the audit log in database
       scan_all_policy:
         type: object
         properties:
@@ -8666,6 +8675,16 @@ definitions:
         description: The storage quota per project
         x-omitempty: true
         x-isnullable: true
+      audit_log_forward_endpoint:
+        type: string
+        description: The audit log forward endpoint
+        x-omitempty: true
+        x-isnullable: true  
+      skip_audit_log_database:
+        type: boolean
+        description: Skip audit log database
+        x-omitempty: true
+        x-isnullable: true          
   StringConfigItem:
     type: object
     properties:

@@ -29,9 +29,9 @@ linters:
     # - whitespace
     - bodyclose
     - deadcode
-    # - errcheck
+    - errcheck
     # - gosec
-    # - gosimple
+    - gosimple
     - govet
     # - noctx
     # - rowserrcheck
@@ -48,7 +48,7 @@ run:
     - ".*_test.go"
     - ".*test.go"
   skip-dirs:
-    - "testing/"
+    - "testing"
   timeout: 5m
 
 issue:
